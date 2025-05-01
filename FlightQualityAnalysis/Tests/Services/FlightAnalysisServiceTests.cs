@@ -136,7 +136,61 @@ public class FlightAnalysisServiceTests
         // Assert 
         Assert.Empty(result);  
     }
+    /// <summary>
+    /// This test verifies that the AnalyzeFlightSequencesAsync method returns no inconsistencies when all flight details are valid.
+    /// It checks that the returned list is empty.
+    /// </summary> 
+    [Fact]
+    public async Task AnalyzeFlightSequencesAsync_ReturnsFlightDepartureAirportInconsistencies_IgnoreCase()
+    {
+        // Arrange
+        var flightDetails = new List<FlightDetails>
+            {
+                new FlightDetails
+                {
+                    Id = 1,
+                    Aircraft_Registration_Number = "ABC123",
+                    Aircraft_Type = "Boeing 737",
+                    Flight_Number = "FL123",
+                    Departure_Airport = "JFK",
+                    Departure_DateTime = DateTime.Now.AddHours(-2),
+                    Arrival_Airport = "LAX",
+                    Arrival_DateTime = DateTime.Now.AddHours(2)
+                },
+                new FlightDetails
+                {
+                    Id = 2,
+                    Aircraft_Registration_Number = "ABC123",
+                    Aircraft_Type = "Boeing 737",
+                    Flight_Number = "FL123",
+                    Departure_Airport = "lax",
+                    Departure_DateTime = DateTime.Now.AddHours(3),
+                    Arrival_Airport = "ord",
+                    Arrival_DateTime = DateTime.Now.AddHours(6)
+                },
+                new FlightDetails
+                {
+                    Id = 3,
+                    Aircraft_Registration_Number = "ABC123",
+                    Aircraft_Type = "Boeing 737",
+                    Flight_Number = "FL123",
+                    Departure_Airport = "ORD",
+                    Departure_DateTime = DateTime.Now.AddHours(8),
+                    Arrival_Airport = "JFK",
+                    Arrival_DateTime = DateTime.Now.AddHours(10)
+                }
+            };
 
+        var repositoryMock = new Mock<IFlightAnalysisRepository>();
+        repositoryMock.Setup(repo => repo.GetFlightDetailsAsync()).ReturnsAsync(flightDetails);
+        var flightAnalysisService = new FlightAnalysisService(repositoryMock.Object, _mapper, _logger.Object);
+
+        // Act
+        var result = await flightAnalysisService.AnalyzeFlightSequencesAsync();
+
+        // Assert 
+        Assert.Empty(result);
+    }
     /// <summary>
     /// This test verifies that the AnalyzeFlightSequencesAsync method returns only one departure airport inconsistency  when other flight details are valid.
     /// It checks that the returned list contains only one inconsistency and verifies the flight number and reason for the inconsistency.

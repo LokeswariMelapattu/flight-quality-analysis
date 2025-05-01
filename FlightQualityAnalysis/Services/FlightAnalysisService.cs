@@ -25,7 +25,7 @@ public class FlightAnalysisService : IFlightAnalysisService
     {
         _flightAnalysisRepository = flightAnalysisRepository;
         _mapper = mapper;
-        _logger= logger;
+        _logger = logger;
     }
     /// <summary>
     /// This method retrieves all flight details from the source file.
@@ -40,7 +40,7 @@ public class FlightAnalysisService : IFlightAnalysisService
         var flightDetails = await _flightAnalysisRepository.GetFlightDetailsAsync();
         return _mapper.Map<IEnumerable<FlightDetailsResultDTO>>(flightDetails);
     }
-     
+
     /// <summary>
     /// This method retrieves flight details and checks for inconsistencies in the flight data. 
     /// </summary>
@@ -53,7 +53,7 @@ public class FlightAnalysisService : IFlightAnalysisService
     /// </remarks>
     public async Task<IEnumerable<AnalyzeFlightSequencesResultDTO>> AnalyzeFlightSequencesAsync()
     {
-        
+
         var result = await _flightAnalysisRepository.GetFlightDetailsAsync();
         _logger.LogInformation("Flight sequence analysis started");
         // Auto mapper to convert the entity model(FlightDetails) to service DTO (AnalyzeFlightSequencesResultDTO)
@@ -61,38 +61,38 @@ public class FlightAnalysisService : IFlightAnalysisService
         // in foreach loop
         var flightDetails = _mapper.Map<IEnumerable<AnalyzeFlightSequencesResultDTO>>(result)
                             .GroupBy(x => x.FlightNumber)
-                            .Where(g => g.Skip(1).Any()) 
+                            .Where(g => g.Skip(1).Any())
                             .SelectMany(g => g)
                             .OrderBy(t => t.FlightNumber)
                             .ThenBy(t => t.DepartureDateTime);
 
         var inconsistencyFlights = new List<AnalyzeFlightSequencesResultDTO>();
-        AnalyzeFlightSequencesResultDTO? lastFlight = null; 
+        AnalyzeFlightSequencesResultDTO? lastFlight = null;
         foreach (var flightInfo in flightDetails)
         {
-            // Check for inconsistencies in the flight details 
+            // Check for inconsistencies in the flight details  
             if (lastFlight?.FlightNumber == flightInfo.FlightNumber &&
-                (lastFlight?.ArrivalAirport != flightInfo.DepartureAirport 
-                    || lastFlight?.ArrivalDateTime > flightInfo.DepartureDateTime) )
+                (!string.Equals(lastFlight?.ArrivalAirport, flightInfo.DepartureAirport, StringComparison.OrdinalIgnoreCase) || lastFlight?.ArrivalDateTime > flightInfo.DepartureDateTime))
             {
                 var reason = "";
-                if (lastFlight?.ArrivalAirport != flightInfo.DepartureAirport) // for airport comparision
-                    reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. Expected departure: {lastFlight.ArrivalAirport}, but was {flightInfo.DepartureAirport}";
-                else // for time comparision
+                if (lastFlight?.ArrivalDateTime > flightInfo.DepartureDateTime) // for daparture time 
                     reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. " +
                        $"Expected departure: {lastFlight?.ArrivalAirport} after {lastFlight?.ArrivalDateTime}, " +
                        $"but was {flightInfo.DepartureAirport} at {flightInfo.DepartureDateTime}.";
+                else // for airport 
+                    reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. Expected departure: {lastFlight.ArrivalAirport}, but was {flightInfo.DepartureAirport}";
+
 
                 // Add inconsistency reason to the identified recoord
-                flightInfo.InconsistentReason=reason;
+                flightInfo.InconsistentReason = reason;
                 inconsistencyFlights.Add(flightInfo);
             }
             // Update the last flight record for the next loop iteration
-            lastFlight = flightInfo; 
+            lastFlight = flightInfo;
         }
 
-        _logger.LogInformation("Flight sequence analysis completed");
+        _logger.LogInformation("Flight sequence analysis completed"); 
         return inconsistencyFlights;
     }
-    
+
 }
