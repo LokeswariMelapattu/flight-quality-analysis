@@ -5,6 +5,9 @@ namespace FlightQualityAnalysis.Services
     /// <summary>
     /// This interface defines the contract for the flight analysis service, which is responsible for analyzing flight data and providing results.
     /// </summary>
+    /// <remarks>
+    /// The service provides methods to retrieve flight details and analyze flight sequences for inconsistencies.
+    /// </remarks>
     public interface IFlightAnalysisService
     {
         /// <summary>

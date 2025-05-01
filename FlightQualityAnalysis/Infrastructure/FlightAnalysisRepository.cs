@@ -6,10 +6,10 @@ using System.Globalization;
 using System.Text.Json;
 
 namespace FlightQualityAnalysis.Infrastructure;
-// <summary>
-// This class is responsible for reading flight details from a CSV file and providing methods to retrieve the data.
-// It implements the IFlightAnalysisRepository interface.
-// </summary>
+/// <summary>
+/// This class is responsible for reading flight details from a CSV file and providing methods to retrieve the data.
+/// It implements the IFlightAnalysisRepository interface.
+/// </summary> 
 public class FlightAnalysisRepository : IFlightAnalysisRepository
 {
     private readonly string _csvPath;
@@ -22,6 +22,7 @@ public class FlightAnalysisRepository : IFlightAnalysisRepository
 /// <summary>
 /// Asynchronously retrieves flight details from a CSV file.
 /// </summary>
+/// <returns>A task that represents the asynchronous operation. The task result contains a collection of flight details.</returns>
     public async Task<IEnumerable<FlightDetails>> GetFlightDetailsAsync()
     {
         if (string.IsNullOrEmpty(_csvPath))

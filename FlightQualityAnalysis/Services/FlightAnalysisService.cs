@@ -7,10 +7,14 @@ using Xunit;
 
 namespace FlightQualityAnalysis.Services;
 /// <summary>
-/// The FlightAnalysisService implements IFlightAnalysisService interface
-/// And it provides methods to retrieve flight details and analyse the flight sequence inconsistencies.
-/// It uses the IFlightAnalysisRepository to access the data layer.
+/// The FlightAnalysisService implements IFlightAnalysisService interface and provides methods to retrieve flight details and analyze flight sequences.
 /// </summary>
+/// <remarks>
+/// This Service provides methods to retrieve flight details and analyse the flight sequence inconsistencies.
+/// It uses the IFlightAnalysisRepository to access the data layer.
+/// It uses AutoMapper to map between the entity model (FlightDetails) and the service DTOs (FlightDetailsResultDTO, AnalyzeFlightSequencesResultDTO).
+/// It also uses ILogger to log information about the analysis process. 
+/// </remarks>
 public class FlightAnalysisService : IFlightAnalysisService
 {
     private readonly IFlightAnalysisRepository _flightAnalysisRepository;
@@ -26,17 +30,27 @@ public class FlightAnalysisService : IFlightAnalysisService
     /// <summary>
     /// This method retrieves all flight details from the source file.
     /// </summary>
+    /// <returns>List of flight details.</returns>
+    /// <remarks>
+    /// The method uses the IFlightAnalysisRepository to get the flight details from the data source.
+    /// It then maps the entity model (FlightDetails) to the service DTO (FlightDetailsResultDTO) using AutoMapper and returns the result.
+    /// </remarks>
     public async Task<IEnumerable<FlightDetailsResultDTO>> GetFlightDetailsAsync()
     {
         var flightDetails = await _flightAnalysisRepository.GetFlightDetailsAsync();
-        // Auto mapper to convert the entity model(FlightDetails) to service DTOs (FlightDetailsResultDTO)
         return _mapper.Map<IEnumerable<FlightDetailsResultDTO>>(flightDetails);
     }
      
     /// <summary>
-    /// This method retrieves flight details and checks for inconsistencies in the flight data.
-    /// Returns all flight details which has inconsistencies.
+    /// This method retrieves flight details and checks for inconsistencies in the flight data. 
     /// </summary>
+    /// <returns>List of flight details with inconsistencies.</returns>
+    /// <remarks>
+    /// The method checks for the following inconsistencies for each flight:
+    /// 1. Departure airport is different from the last record's arrival airport.
+    /// 2. Departure date time is before the last record's arrival date time.
+    /// If any inconsistencies are found, they are added to the result list.
+    /// </remarks>
     public async Task<IEnumerable<AnalyzeFlightSequencesResultDTO>> AnalyzeFlightSequencesAsync()
     {
         
@@ -56,16 +70,13 @@ public class FlightAnalysisService : IFlightAnalysisService
         AnalyzeFlightSequencesResultDTO? lastFlight = null; 
         foreach (var flightInfo in flightDetails)
         {
-            // Check for inconsistencies in the flight details
-            // 1. Check if the flight number is the same as the last one
-            // 2. Check if the departure airport is different from the last record arrival airport
-            //      or departure date time is before the last record arrival date time
+            // Check for inconsistencies in the flight details 
             if (lastFlight?.FlightNumber == flightInfo.FlightNumber &&
                 (lastFlight?.ArrivalAirport != flightInfo.DepartureAirport 
                     || lastFlight?.ArrivalDateTime > flightInfo.DepartureDateTime) )
             {
                 var reason = "";
-                if (lastFlight?.ArrivalAirport != flightInfo.DepartureAirport)
+                if (lastFlight?.ArrivalAirport != flightInfo.DepartureAirport) // for airport comparision
                     reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. Expected departure: {lastFlight.ArrivalAirport}, but was {flightInfo.DepartureAirport}";
                 else // for time comparision
                     reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. " +

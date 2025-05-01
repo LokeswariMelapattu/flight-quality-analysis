@@ -16,6 +16,8 @@ public class ExceptionHandlingMiddleware
 /// Handles exceptions that occur during the request processing pipeline.
 /// Logs the exception and returns a JSON response with the error details.
 /// </summary>
+/// <param name="context">The HTTP context.</param>
+/// <returns>A task that represents the asynchronous operation.</returns>
     public async Task Invoke(HttpContext context)
     {
         try

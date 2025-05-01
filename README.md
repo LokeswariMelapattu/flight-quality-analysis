@@ -1,17 +1,18 @@
 # flight-quality-analysis
 
 ## Overview
-The **Flight Quality Analysis** project provides tools to analyze flight data for inconsistencies in flight sequences. It includes:
+The **Flight Quality Analysis** project provides Service to analyze the flight data for inconsistencies in flight sequences.
+It includes:
 - A service (`FlightAnalysisService`) to retrieve and analyze flight data.
 - Unit tests to ensure the correctness of the service.
 
 ## Features
 - Retrieve flight details from a repository.
 - Analyze flight sequences for inconsistencies, such as:
-  - Departure airport mismatches.
+  - Departure airport mismatches with the sequence.
   - Departure times earlier than the previous flight's arrival time.
 
-## Technologies
+## Technologies Used
 - **.NET 8**
 - **csvHelper** for reading CSV File.
 - **xUnit** for unit testing.
