@@ -1,0 +1,10 @@
+@FlightQualityAnalysis_HostAddress = http://localhost:5044
+
+GET {{FlightQualityAnalysis_HostAddress}}/api/flightqualityanalysis/FlightDetails
+Accept: application/json
+###
+
+GET {{FlightQualityAnalysis_HostAddress}}/api/flightqualityanalysis/AnalyzeFlightSequences
+Accept: application/json
+
+###
