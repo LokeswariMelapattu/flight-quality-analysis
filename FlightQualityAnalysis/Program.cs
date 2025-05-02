@@ -21,11 +21,10 @@ IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-    .Build(); 
-AppSettings settings = configuration.GetSection("AppSettings").Get<AppSettings>();
- 
+    .Build();  
+
 //Register Services
-builder.Services.AddSingleton<IFlightAnalysisRepository>(sv => new FlightAnalysisRepository(settings.SourceFilePath));
+builder.Services.AddSingleton<IFlightAnalysisRepository, FlightAnalysisRepository>();
 builder.Services.AddSingleton<IFlightAnalysisService, FlightAnalysisService>();
 
 // Register Automapper
@@ -41,7 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Flight Quality Analysis v1"));
 }
-
+  
 app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>(); 
 app.UseAuthorization();

@@ -137,11 +137,11 @@ public class FlightAnalysisServiceTests
         Assert.Empty(result);  
     }
     /// <summary>
-    /// This test verifies that the AnalyzeFlightSequencesAsync method returns no inconsistencies when all flight details are valid.
+    /// This test verifies that the AnalyzeFlightSequencesAsync method returns no inconsistencies(ignore casing) when all flight details are valid.
     /// It checks that the returned list is empty.
     /// </summary> 
     [Fact]
-    public async Task AnalyzeFlightSequencesAsync_ReturnsFlightDepartureAirportInconsistencies_IgnoreCase()
+    public async Task AnalyzeFlightSequencesAsync_ReturnsNoFlightDepartureAirportInconsistencies_IgnoreCase()
     {
         // Arrange
         var flightDetails = new List<FlightDetails>

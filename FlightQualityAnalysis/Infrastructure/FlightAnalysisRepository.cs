@@ -14,9 +14,10 @@ public class FlightAnalysisRepository : IFlightAnalysisRepository
 {
     private readonly string _csvPath;
 
-    public FlightAnalysisRepository(string csvPath)
+    public FlightAnalysisRepository(IConfiguration config, IHostEnvironment hostEnvironment)
     {
-        _csvPath = csvPath;
+       var _sourceFilePath = config["AppSettings:SourceFilePath"]?.ToString()??"";
+        _csvPath = Path.Combine(hostEnvironment.ContentRootPath, _sourceFilePath); 
     }
 
 /// <summary>
@@ -27,9 +28,9 @@ public class FlightAnalysisRepository : IFlightAnalysisRepository
     {
         if (string.IsNullOrEmpty(_csvPath))
         {
-            throw new ArgumentException("CSV path cannot be null or empty.", nameof(_csvPath));
+            throw new ArgumentException("CSV source file path cannot be null or empty");
         }
-
+         
         using var reader = new StreamReader(_csvPath); 
         var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
