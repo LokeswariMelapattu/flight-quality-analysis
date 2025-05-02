@@ -2,8 +2,7 @@
 using CsvHelper.Configuration;
 using FlightQualityAnalysis.Domain.Entities;
 using FlightQualityAnalysis.Domain.Interfaces;
-using System.Globalization;
-using System.Text.Json;
+using System.Globalization; 
 
 namespace FlightQualityAnalysis.Infrastructure;
 /// <summary>

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
+﻿
 namespace FlightQualityAnalysis.Handlers;
 public class ExceptionHandlingMiddleware
 {

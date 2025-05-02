@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using FlightQualityAnalysis.Domain.Entities;
+﻿using AutoMapper; 
 using FlightQualityAnalysis.Domain.Interfaces;
-using FlightQualityAnalysis.Services.DTOs;
-using Moq;
-using Xunit;
+using FlightQualityAnalysis.Services.DTOs; 
 
 namespace FlightQualityAnalysis.Services;
 /// <summary>
@@ -79,8 +76,8 @@ public class FlightAnalysisService : IFlightAnalysisService
                     reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. " +
                        $"Expected departure: {lastFlight?.ArrivalAirport} after {lastFlight?.ArrivalDateTime}, " +
                        $"but was {flightInfo.DepartureAirport} at {flightInfo.DepartureDateTime}.";
-                else // for airport 
-                    reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. Expected departure: {lastFlight.ArrivalAirport}, but was {flightInfo.DepartureAirport}";
+                else // for daparture airport 
+                    reason = $"Flight {flightInfo.FlightNumber} has inconsistent route. Expected departure: {lastFlight?.ArrivalAirport}, but was {flightInfo.DepartureAirport}";
 
 
                 // Add inconsistency reason to the identified recoord
